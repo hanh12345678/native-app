@@ -10,44 +10,64 @@ const Home = ({navigation}) => {
     handleSubmit,
     formState: {errors},
   } = useForm({});
+  const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState([]);
   const getUsers = async () => {
     try {
-      const response = await fetch('https://gorest.co.in/public/v2/users');
+      const response = await fetch(
+        'https://5f7fd524d6aabe00166f0a52.mockapi.io/api/v1/people/todos',
+      );
       const json = await response.json();
       setData(json);
     } catch (err) {
       console.error(err);
     }
   };
-  const onSubmit = async data => {
-    const response = await fetch('https://gorest.co.in/public/v2/users', {
+  const onSubmit = async values => {
+    fetch('https://5f7fd524d6aabe00166f0a52.mockapi.io/api/v1/people/todos', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({...data, gender: 'male', status: 'active'}),
-    });
-    console.log(response);
+      body: JSON.stringify({...values, status: false}),
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(res => {
+        setData([...data, res]);
+        onClose();
+      });
   };
   useEffect(() => {
     getUsers();
   }, []);
+  const onOpenModal = () => {
+    setShowModal(true);
+  };
+  const onClose = () => {
+    setShowModal(false);
+  };
   return (
     <View style={styles.container}>
       <FlatList
         data={data}
+        style={{padding: 10}}
         keyExtractor={({id}, index) => id}
         renderItem={({item}) => (
           <Pressable onPress={() => navigation.push('Detail', {id: item.id})}>
-            <Text>{item.name}</Text>
+            <Text style={{padding: 10}}>{item.name}</Text>
           </Pressable>
         )}
       />
-      <GenericModal>
+      <Pressable
+        style={[styles.button, styles.buttonClose]}
+        onPress={onOpenModal}>
+        <Text style={styles.textStyle}>Show Modal</Text>
+      </Pressable>
+      <GenericModal show={showModal} onClose={onClose}>
         <Input name="name" control={control} placeholder="name" />
-        <Input name="email" control={control} placeholder="email" />
         <Pressable
           style={[styles.button, styles.submit]}
           onPress={handleSubmit(onSubmit)}>
@@ -76,5 +96,8 @@ const styles = StyleSheet.create({
   submit: {
     backgroundColor: 'blue',
     marginBottom: 10,
+  },
+  buttonClose: {
+    backgroundColor: 'green',
   },
 });

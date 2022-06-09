@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, Pressable, Modal} from 'react-native';
 
-const GenericModal = ({button, children}) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const onOpenModal = () => {
-    setModalVisible(true);
-  };
-  const onCloseModal = () => {
-    setModalVisible(false);
-  };
+const GenericModal = ({children, show, onClose}) => {
+  const [modalVisible, setModalVisible] = useState(show || false);
+  useEffect(() => {
+    setModalVisible(show);
+  }, [show]);
+  if (!modalVisible) {
+    return null;
+  }
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -23,25 +23,12 @@ const GenericModal = ({button, children}) => {
             {children}
             <Pressable
               style={[styles.button, styles.buttonClose]}
-              onPress={onCloseModal}>
+              onPress={onClose}>
               <Text style={styles.textStyle}>Hide Modal</Text>
             </Pressable>
           </View>
         </View>
       </Modal>
-      {button ? (
-        <Pressable
-          style={[styles.button, styles.buttonClose]}
-          onPress={onOpenModal}>
-          {button}
-        </Pressable>
-      ) : (
-        <Pressable
-          style={[styles.button, styles.buttonClose]}
-          onPress={onOpenModal}>
-          <Text style={styles.textStyle}>Show Modal</Text>
-        </Pressable>
-      )}
     </View>
   );
 };

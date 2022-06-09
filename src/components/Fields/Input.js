@@ -1,6 +1,6 @@
 import React from 'react';
 import {useController} from 'react-hook-form';
-import {TextInput, StyleSheet, SafeAreaView} from 'react-native';
+import {TextInput, StyleSheet} from 'react-native';
 
 const Input = ({name, control, placeholder}) => {
   const {field} = useController({
@@ -9,14 +9,12 @@ const Input = ({name, control, placeholder}) => {
     name,
   });
   return (
-    <SafeAreaView>
-      <TextInput
-        style={styles.input}
-        value={field.value}
-        placeholder={placeholder}
-        onChangeText={field.onChange}
-      />
-    </SafeAreaView>
+    <TextInput
+      style={styles.input}
+      value={field.value}
+      placeholder={placeholder}
+      onChangeText={field.onChange}
+    />
   );
 };
 
